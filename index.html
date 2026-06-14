@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CORTIS 一周年纪念站</title>
+    <link rel="stylesheet" href="547.css">
+    <style>
+        body {
+    margin: 0;
+    background: url("photo/1.jpg") no-repeat center fixed;
+    background-size: cover;
+}
+/* ————————————————————————————————————————
+   3D轮播 + 回到顶部 总样式区
+———————————————————————————————————————— */
+
+/* 轮播最外层容器（控制整个轮播区域） */
+#home {
+    padding: 80px 0;           /* 上下内边距：让轮播不贴紧导航栏/下面板块 */
+    background: transparent;   /* 背景透明：彻底去掉白色背景 */
+    overflow: hidden;          /* 超出容器的内容隐藏：防止图片溢出乱跑 */
+    height: auto !important;   /* 高度自动：不被其他CSS强行限制高度 */
+    position: relative;        /* 给箭头定位用 */
+}
+
+/* 轮播图片包裹层（所有图片的父盒子） */
+.wrap-box {
+    display: flex;             /* 弹性布局：让图片默认横向排成一行 */
+    justify-content: center;   /* 水平居中：所有图片整体居中显示 */
+    align-items: center;       /* 垂直居中：图片上下居中，不顶上去/掉下来 */
+    height: 360px;             /* 容器总高度：决定轮播区域有多高 */
+    gap: -20px;                /* 图片间距：负数=图片重叠，-20轻微重叠更有3D感 */
+    position: relative;        /* 相对定位：给里面绝对定位的图片做参考 */
+}
+
+/* 所有轮播图片的公共基础样式 */
+.item {
+    width: auto;              /* 宽度自动：使用图片原始宽度，不强行拉伸 */
+    height: auto;             /* 高度自动：使用图片原始高度，不变形 */
+    
+    /* 3D效果核心：透视 + 轻微Y轴倾斜 + 缩小 */
+    transform: perspective(800px) rotateY(15deg) scale(0.85);
+    
+    transition: all 0.4s ease;/* 过渡动画：切换位置时平滑移动，不卡顿 */
+    opacity: 0.7;             /* 透明度：0-1，两侧图片半透明，突出中间 */
+    position: absolute;       /* 绝对定位：让图片可以固定在左/中/右指定位置 */
+}
+
+/* 最左侧图片 */
+.item.left-2 {
+    transform: perspective(800px) rotateY(20deg) scale(0.75);
+    left: 0.02%; /* 从 10% → 15% 更靠左，离中间更远 */
+}
+
+/* 左侧第一张（不动） */
+.item.left-1 {
+    transform: perspective(800px) rotateY(10deg) scale(0.85);
+    left: 24%;
+}
+
+/* 右侧第一张（不动） */
+.item.right-1 {
+    transform: perspective(800px) rotateY(-10deg) scale(0.85);
+    right: 24%;
+}
+
+/* 最右侧图片 */
+.item.right-2 {
+    transform: perspective(800px) rotateY(-20deg) scale(0.75);
+    right: 0.02%; /* 从 10% → 15% 更靠右，离中间更远 */
+}
+/* ————————————————————
+   中间【激活状态大图】
+———————————————————— */
+.item.active {
+    /* 无倾斜 + 放大1.3倍：最突出、最清晰 */
+    transform: perspective(800px) rotateY(0deg) scale(1.3);
+    
+    opacity: 1;               /* 完全不透明：100%显示 */
+    z-index: 9;               /* 层级最高：显示在所有图片最上面 */
+    position: relative;       /* 相对定位：不跟左右图片抢绝对位置 */
+    width: auto;              /* 宽高自适应原图 */
+    height: auto;
+}
+
+/* 轮播图片本身样式 */
+.item img {
+    max-height: 320px;        /* 最大高度320px：防止图片太高撑破容器 */
+    width: auto;              /* 宽度自适应：保持图片原始比例 */
+    border-radius: 4px;       /* 图片圆角：4px轻微圆角，更美观 */
+}
+
+/* 底部小圆点容器 */
+.dot-group {
+    display: flex;             /* 横向排列 */
+    gap: 8px;                  /* 圆点之间间距 8px */
+    justify-content: center;   /* 圆点整体居中 */
+    margin-top: 35px;          /* 往下移动了！数字越大越往下 */
+}
+
+/* 单个小圆点默认样式 */
+.dot-group span {
+    width: 10px;               /* 圆点宽 */
+    height: 10px;              /* 圆点高 */
+    border-radius: 50%;        /* 变成正圆形 */
+    background: #ccc;         /* 默认灰色 */
+    cursor: pointer;
+}
+
+/* 激活状态的小圆点（当前显示图片对应的点） */
+.dot-group span.active {
+    background: #364e86;       /* 选中时变成主题蓝色 */
+}
+
+/* ————————————————————
+   🔥 左右切换箭头样式
+———————————————————— */
+.carousel-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    background: rgba(0,0,0,0.3);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    cursor: pointer;
+    z-index: 99;
+    user-select: none;
+}
+.carousel-arrow:hover {
+    background: rgba(0,0,0,0.6);
+}
+.arrow-left {
+    left: 20px;
+}
+.arrow-right {
+    right: 20px;
+}
+
+/* 回到顶部样式 */
+#goTop {
+    position: fixed;
+    right: 25px;
+    bottom: 25px;
+    width: 45px;
+    height: 45px;
+    background: #364e86;
+    color: #fff;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 45px;
+    font-size: 20px;
+    display: none;
+    z-index: 999;
+    cursor: pointer;
+}
+#goTop:hover {
+    background: #2a3d66;
+}
+/* =====视频弹窗样式===== */
+.video-popup{
+    display:none;
+    position:fixed;
+    top:0;left:0;
+    width:100%;height:100%;
+    background:rgba(0,0,0,0.85);
+    z-index:9999;
+    justify-content:center;
+    align-items:center;
+}
+.video-popup.show{
+    display:flex;
+}
+.pop-close{
+    position:absolute;
+    top:30px;
+    right:40px;
+    color:#fff;
+    font-size:36px;
+    cursor:pointer;
+}
+#popVideo{
+    max-width:85vw;
+    max-height:82vh;
+}
+.work-item{
+    cursor:pointer;
+}
+.work-item:hover{
+    transform:scale(1.02);
+    transition:0.3s;
+}
+
+/* 导航栏居中（恢复原色） */
+/* 导航栏：底色#364e86、文字白色 + 整体居中 */
+.navbar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 18px 0;
+  background: #364e86;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+.navbar ul {
+  display: flex;
+  gap: 22px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.navbar a {
+  text-decoration: none;
+  color: #fff;
+  font-weight: 500;
+}
+.logo {
+  font-size: 20px;
+  font-weight: bold;
+  color: #fff;
+  margin-right: 30px;
+}
+    </style>
+</head>
+<body>
+
+<!-- 导航栏 -->
+<header class="navbar">
+    <div class="logo">CORTIS</div>
+    <nav>
+        <ul>
+            <li><a href="#home">首页</a></li>
+            <li><a href="#about">组合介绍</a></li>
+            <li><a href="#members">成员档案</a></li>
+            <li><a href="#works">经典作品</a></li>
+            <li><a href="#messages">粉丝留言</a></li>
+            <li><a href="#voice">爱豆心语</a></li>
+            <li><a href="#fans-provinces">全国各地祝福</a></li>
+            <li><a href="#fans">全球粉丝祝福</a></li>
+        </ul>
+    </nav>
+</header>
+
+<!-- 3D立体轮播区 -->
+<section id="home">
+    <div class="wrap-box">
+        <div class="item left-2" data-index="0">
+            <img src="photo/求盐回归神图_1_玹一口鱼ㅇㅅㅎ_来自小红书网页版.jpg" alt="团体照">
+        </div>
+        <div class="item left-1" data-index="1">
+            <img src="photo/一组雨凡背景图_1_uuu_来自小红书网页版.jpg" alt="赵雨凡">
+        </div>
+
+        <div class="item active" data-index="2" id="center-slide">
+            <img src="photo/🐷猪圈来了几个天使站姐_1_只是一只小猪🐽_来自小红书网页版.jpg" alt="金主训">
+        </div>
+
+        <div class="item right-1" data-index="3">
+            <img src="photo/_1_糯饼小猫_来自小红书网页版.jpg" alt="马丁">
+        </div>
+        <div class="item right-2" data-index="4">
+            <img src="photo/37618fbc75814168a424e1c23c146b97.jpg" alt="安乾镐">
+        </div>
+    </div>
+
+    <!-- 左右箭头 -->
+    <div class="carousel-arrow arrow-left">&lt;</div>
+    <div class="carousel-arrow arrow-right">&gt;</div>
+
+    
+
+    <div class="dot-group">
+        <span class="active"></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+</section>
+
+<!-- 组合介绍 -->
+<section id="about" class="about-section">
+    <h2 class="section-title">组合介绍</h2>
+    <div class="about-content">
+        <div class="about-img-stack">
+            <img src="photo\屏幕截图 2026-06-05 015919.png" alt="组合主图" class="about-main-img">
+        </div>
+        <div class="about-text">
+            <h3 class="about-subtitle">用心歌唱，与世界对话</h3>
+            <p>CORTIS 是2025年正式出道的五人韩国偶像团体，自出道以来，凭借独树一帜的音乐风格与极具感染力的舞台表现力，在众多新人团体中崭露头角，迅速收获了海内外大量粉丝的关注与喜爱。在短短一年的时间里，他们用稳定的实力、鲜明的风格与真诚的态度，一步步站稳脚跟，成为备受期待的新生代偶像组合。</p>
+            <p>团名 CORTIS 寓意“用心歌唱”，这也是五位成员始终坚守的初心与信念。他们希望用最真实、最纯粹的音乐与世界对话，用歌声传递情感、表达态度，在每一首作品里注入努力与热爱，在每一个舞台上展现最完整的自己。不迎合、不浮躁，坚持做有温度、有态度的音乐，是 CORTIS 一直以来的坚持。</p>
+            <p>2025—2026，正值 CORTIS 出道一周年。这一年里，有汗水、有成长，有惊喜、有感动，更离不开每一位粉丝一路以来的陪伴、信任与支持。感谢大家的每一次应援、每一份喜爱、每一份守候，让五位少年在追梦路上更加勇敢、更加坚定。</p>
+            <p>未来，CORTIS 会继续带着初心与热爱，在音乐的道路上不断努力、不断成长，用更好的作品、更棒的舞台回报大家的喜爱，继续用心歌唱，与世界共鸣，走向更远、更闪亮的未来。</p>
+            <div class="about-tags">
+                <span class="tag">#出道一周年</span>
+                <span class="tag">#用心歌唱</span>
+                <span class="tag">#CORTIS</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 成员档案 -->
+<section id="members" class="members-section">
+    <h2 class="section-title">成员档案</h2>
+    <div class="members-grid">
+
+        <a href="jams.html" target="_blank">
+            <div class="member-card">
+                <img src="photo/想在哥哥的鼻子上滑滑梯…_1_jaein._来自小红书网页版.jpg" alt="赵雨凡">
+                <h3>赵雨凡</h3>
+                <p>定位：队长 / 主唱</p>
+            </div>
+        </a>
+
+        <a href="juhoon.html" target="_blank">
+            <div class="member-card">
+                <img src="photo/cacb6bc54c6781c64e9461c3eb13b08a.jpg" alt="金主训">
+                <h3>金主训</h3>
+                <p>定位：主舞 / 领唱</p>
+            </div>
+        </a>
+
+        <a href="martin.html" target="_blank">
+            <div class="member-card">
+                <img src="photo/以上哪张pic发puq像男朋友…_1_Daliaaaa_来自小红书网页版.jpg" alt="马丁">
+                <h3>马丁</h3>
+                <p>定位：主rapper / 领舞</p>
+            </div>
+        </a>
+
+        <a href="seungyeon.html" target="_blank">
+            <div class="member-card">
+                <img src="photo/个人认为夯到爆的一些照片_1_ycx_www_来自小红书网页版.jpg" alt="严成玹">
+                <h3>严成玹</h3>
+                <p>定位：副主唱 / 门面</p>
+            </div>
+        </a>
+
+        <a href="keunho.html" target="_blank">
+            <div class="member-card">
+                <img src="photo/cfcd8a2259c4d5b46d3cad7826f3f616.jpg" alt="安乾镐">
+                <h3>安乾镐</h3>
+                <p>定位：忙内 / 全能</p>
+            </div>
+        </a>
+
+    </div>
+</section>
+<!-- 经典作品 -->
+<section id="works" class="works-section">
+    <h2 class="section-title">经典作品</h2>
+    <div class="works-grid">
+        <!-- data-video 填对应mp4路径，后续你自行改视频地址 -->
+        <div class="work-item" data-video="photo/redred.mp4">
+            <div class="work-text">
+                <h3>《Red Red》</h3>
+                <p>充满活力的主打曲，强烈节奏展现CORTIS专属舞台魅力。</p>
+            </div>
+            <img src="photo/redred.jpg" alt="Red Red">
+        </div>
+        <div class="work-item" data-video="photo/go.mp4">
+            <div class="work-text">
+                <h3>《Go》</h3>
+                <p>热血向上的青春旋律，传递勇往直前的少年气息。</p>
+            </div>
+            <img src="photo/go.jpg" alt="Go">
+        </div>
+        <div class="work-item" data-video="photo/what you want.mp4">
+            <div class="work-text">
+                <h3>《What you want》</h3>
+                <p>网页背景音乐单曲，温柔又有力量的诚意之作。</p>
+            </div>
+            <img src="photo/what.jpg" alt="What you want">
+        </div>
+        <div class="work-item" data-video="photo/acai.mp4">
+            <div class="work-text">
+                <h3>《Acai》</h3>
+                <p>清新治愈的夏日曲风，轻松自在，一听就爱上。</p>
+            </div>
+            <img src="photo/acai.jpg" alt="Acai">
+        </div>
+        <div class="work-item" data-video="photo/tnt.mp4">
+            <div class="work-text">
+                <h3>《Tnt》</h3>
+                <p>梦幻氛围感曲目，细腻声线搭配唯美歌词。</p>
+            </div>
+            <img src="photo/8feb044bed7035d4b70a6cb242990aec.jpg" alt="Txt">
+        </div>
+        <div class="work-item" data-video="photo/bluelip.mp4">
+            <div class="work-text">
+                <h3>《bluelip》</h3>
+                <p>温暖治愈的抒情曲，代表团队与粉丝的温柔约定。</p>
+            </div>
+            <img src="photo/xinggaun.jpg" alt="星光">
+        </div>
+    </div>
+</section>
+
+<!-- 全局视频弹窗（放在body最末尾、回到顶部代码上面即可） -->
+<div class="video-popup" id="videoPop">
+    <span class="pop-close">×</span>
+    <video id="popVideo" controls preload="auto">
+        <source src="" type="video/mp4">
+    </video>
+</div>
+
+<!-- 粉丝留言区 -->
+<section id="messages" class="messages-section">
+    <h2 class="section-title">粉丝留言区</h2>
+    <div class="message-form">
+        <input type="text" id="username" placeholder="你的昵称" required>
+        <textarea id="message" placeholder="写下你想对CORTIS说的话..." required></textarea>
+        <button id="submit-btn">发送留言</button>
+    </div>
+    <div class="messages-list" id="messagesList"></div>
+</section>
+
+<script>
+// 粉丝留言完整版 - 显示+保存+删除+点赞
+const submitBtn = document.getElementById('submit-btn');
+const messagesList = document.getElementById('messagesList');
+
+// 页面加载时显示留言
+window.onload = loadMessages;
+
+// 提交留言
+submitBtn.onclick = function () {
+    let name = document.getElementById('username').value.trim();
+    let msg = document.getElementById('message').value.trim();
+    if (!name || !msg) return;
+
+    let messages = JSON.parse(localStorage.getItem('cortisMsg') || '[]');
+    messages.unshift({
+        id: Date.now(),
+        name: name,
+        content: msg,
+        time: new Date().toLocaleString(),
+        like: 0
+    });
+
+    localStorage.setItem('cortisMsg', JSON.stringify(messages));
+    document.getElementById('username').value = '';
+    document.getElementById('message').value = '';
+    loadMessages();
+};
+
+// 加载显示
+function loadMessages() {
+    let list = JSON.parse(localStorage.getItem('cortisMsg') || '[]');
+    messagesList.innerHTML = '';
+
+    list.forEach((item, index) => {
+        let el = document.createElement('div');
+        el.className = 'message-item';
+        el.innerHTML = `
+            <div class="msg-name">${item.name}</div>
+            <div class="msg-content">${item.content}</div>
+            <div class="msg-bottom">
+                <span class="msg-time">${item.time}</span>
+                <div class="msg-btns">
+                    <button class="like-btn" data-index="${index}">❤️ ${item.like}</button>
+                    <button class="del-btn" data-index="${index}">删除</button>
+                </div>
+            </div>
+        `;
+        messagesList.appendChild(el);
+    });
+
+    // 绑定删除
+    document.querySelectorAll('.del-btn').forEach(btn => {
+        btn.onclick = function () {
+            let i = this.dataset.index;
+            let msgs = JSON.parse(localStorage.getItem('cortisMsg'));
+            msgs.splice(i, 1);
+            localStorage.setItem('cortisMsg', JSON.stringify(msgs));
+            loadMessages();
+        };
+    });
+
+    // 绑定点赞
+    document.querySelectorAll('.like-btn').forEach(btn => {
+        btn.onclick = function () {
+            let i = this.dataset.index;
+            let msgs = JSON.parse(localStorage.getItem('cortisMsg'));
+            msgs[i].like += 1;
+            localStorage.setItem('cortisMsg', JSON.stringify(msgs));
+            loadMessages();
+        };
+    });
+}
+</script>
+
+<style>
+/* 留言框样式 */
+.messages-list {
+    max-width: 720px;
+    margin: 30px auto 0;
+}
+.message-item {
+    background: rgba(255, 255, 255, 0.9);
+    border-left: 4px solid #364e86;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    text-align: left;
+}
+.msg-name {
+    font-weight: bold;
+    color: #364e86;
+    font-size: 15px;
+    margin-bottom: 6px;
+}
+.msg-content {
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 10px;
+    color: #222;
+}
+.msg-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.msg-time {
+    font-size: 12px;
+    color: #888;
+}
+.msg-btns {
+    display: flex;
+    gap: 8px;
+}
+.like-btn, .del-btn {
+    padding: 4px 10px;
+    font-size: 12px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+}
+.like-btn {
+    background: #fff0f4;
+    color: #c74c7a;
+}
+.del-btn {
+    background: #f5f5f5;
+    color: #666;
+}
+.like-btn:hover, .del-btn:hover {
+    opacity: 0.8;
+}
+</style>
+<!-- 爱豆心语 · 成员语音专区 -->
+<section id="voice" class="voice-section">
+    <h2 class="section-title">爱豆心语</h2>
+    <div class="voice-wrap">
+        <!-- 五个成员圆圈 + 播放按钮 -->
+        <div class="voice-item">
+            <div class="voice-circle">
+                <img src="photo\0ef8d8113e323a029ab637931c49e535.jpg" alt="赵雨凡">
+            </div>
+            <p>赵雨凡</p>
+            <audio controls class="voice-player">
+                <source src="/MP3/赵雨凡.mp3" type="audio/mpeg">
+            </audio>
+        </div>
+
+        <div class="voice-item">
+            <div class="voice-circle">
+                <img src="photo\87b4745910981e585cc931d345d40ac5.jpg" alt="金主训">
+            </div>
+            <p>金主训</p>
+            <audio controls class="voice-player">
+                <source src="/MP3/猪(1).mp3" type="audio/mpeg">
+            </audio>
+        </div>
+
+        <div class="voice-item">
+            <div class="voice-circle">
+                <img src="photo/eef404d78dfd16257b309fb347d1190c.jpg" alt="马丁">
+            </div>
+            <p>马丁</p>
+            <audio controls class="voice-player">
+                <source src="/MP3/马丁.mp3" type="audio/mpeg">
+            </audio>
+        </div>
+
+        <div class="voice-item">
+            <div class="voice-circle">
+                <img src="photo\72093637e1a717f78c2c8b93efc30ea1.jpg" alt="严成玹">
+            </div>
+            <p>严成玹</p>
+            <audio controls class="voice-player">
+                <source src="/MP3/严.mp3" type="audio/mpeg">
+            </audio>
+        </div>
+
+        <div class="voice-item">
+            <div class="voice-circle">
+                <img src="photo\Hug me until I smell like you_1_乾儿兔_来自小红书网页版.jpg" alt="安乾镐">
+            </div>
+            <p>安乾镐</p>
+            <audio controls class="voice-player">
+                <source src="/MP3/安.mp3" type="audio/mpeg">
+            </audio>
+        </div>
+    </div>
+</div>
+
+<style>
+/* 爱豆心语专区样式 */
+.voice-section {
+    max-width: 1100px;
+    margin: 60px auto;
+    padding: 0 20px;
+    text-align: center;
+}
+.voice-wrap {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+    margin-top: 30px;
+}
+.voice-item {
+    width: 160px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.voice-circle {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid #364e86;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    margin-bottom: 10px;
+}
+.voice-circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.voice-item p {
+    font-size: 15px;
+    font-weight: 500;
+    color: #222;
+    margin: 0 0 8px 0;
+}
+.voice-player {
+    width: 100%;
+    height: 32px;
+}
+</style>
+
+<!-- 全国各地祝福 -->
+<section id="fans-provinces" class="provinces-section">
+    <h2 class="section-title">来自全国各地的祝福</h2>
+    <div class="province-grid">
+      <div class="prov-card" data-txt="北京粉丝：CORTIS一周年快乐！星途坦荡，未来可期！">
+        北京
+        <div class="tooltip">北京粉丝：CORTIS一周年快乐！星途坦荡，未来可期！</div>
+      </div>
+      <div class="prov-card" data-txt="天津粉丝：陪伴是最长情的告白，我们永远在！">
+        天津
+        <div class="tooltip">天津粉丝：陪伴是最长情的告白，我们永远在！</div>
+      </div>
+      <div class="prov-card" data-txt="河北粉丝：以心为声，与你共鸣，永远为你们应援！">
+        河北
+        <div class="tooltip">河北粉丝：以心为声，与你共鸣，永远为你们应援！</div>
+      </div>
+      <div class="prov-card" data-txt="山西粉丝：愿你们永远热烈，永远自由，永远被爱！">
+        山西
+        <div class="tooltip">山西粉丝：愿你们永远热烈，永远自由，永远被爱！</div>
+      </div>
+      <div class="prov-card" data-txt="内蒙古粉丝：草原送来最辽阔的祝福！">
+        内蒙古
+        <div class="tooltip">内蒙古粉丝：草原送来最辽阔的祝福！</div>
+      </div>
+      <div class="prov-card" data-txt="辽宁粉丝：一周年快乐！我们会一直陪着你们！">
+        辽宁
+        <div class="tooltip">辽宁粉丝：一周年快乐！我们会一直陪着你们！</div>
+      </div>
+      <div class="prov-card" data-txt="吉林粉丝：星光不问赶路人，时光不负有心人！">
+        吉林
+        <div class="tooltip">吉林粉丝：星光不问赶路人，时光不负有心人！</div>
+      </div>
+      <div class="prov-card" data-txt="黑龙江粉丝：无论多久，我们都会坚定地支持CORTIS！">
+        黑龙江
+        <div class="tooltip">黑龙江粉丝：无论多久，我们都会坚定地支持CORTIS！</div>
+      </div>
+      <div class="prov-card" data-txt="上海粉丝：愿你们永远光芒万丈，一路繁花相送！">
+        上海
+        <div class="tooltip">上海粉丝：愿你们永远光芒万丈，一路繁花相送！</div>
+      </div>
+      <div class="prov-card" data-txt="江苏粉丝：愿你们永远闪闪发光，永远做最耀眼的星！">
+        江苏
+        <div class="tooltip">江苏粉丝：愿你们永远闪闪发光，永远做最耀眼的星！</div>
+      </div>
+      <div class="prov-card" data-txt="浙江粉丝：一周年快乐！未来我们继续同行！">
+        浙江
+        <div class="tooltip">浙江粉丝：一周年快乐！未来我们继续同行！</div>
+      </div>
+      <div class="prov-card" data-txt="安徽粉丝：感谢相遇，感谢陪伴，未来继续走花路！">
+        安徽
+        <div class="tooltip">安徽粉丝：感谢相遇，感谢陪伴，未来继续走花路！</div>
+      </div>
+      <div class="prov-card" data-txt="福建粉丝：CORTIS大发！一周年快乐！">
+        福建
+        <div class="tooltip">福建粉丝：CORTIS大发！一周年快乐！</div>
+      </div>
+      <div class="prov-card" data-txt="江西粉丝：愿你们平安喜乐，万事顺遂！">
+        江西
+        <div class="tooltip">江西粉丝：愿你们平安喜乐，万事顺遂！</div>
+      </div>
+      <div class="prov-card" data-txt="山东粉丝：脚踏实地，仰望星空，CORTIS加油！">
+        山东
+        <div class="tooltip">山东粉丝：脚踏实地，仰望星空，CORTIS加油！</div>
+      </div>
+      <div class="prov-card" data-txt="河南粉丝：一周年快乐！我们永远是你们最坚实的后盾！">
+        河南
+        <div class="tooltip">河南粉丝：一周年快乐！我们永远是你们最坚实的后盾！</div>
+      </div>
+      <div class="prov-card" data-txt="湖北粉丝：以热爱为名，伴你们岁岁年年！">
+        湖北
+        <div class="tooltip">湖北粉丝：以热爱为名，伴你们岁岁年年！</div>
+      </div>
+      <div class="prov-card" data-txt="湖南粉丝：愿你们永远热烈，永远向前！">
+        湖南
+        <div class="tooltip">湖南粉丝：愿你们永远热烈，永远向前！</div>
+      </div>
+      <div class="prov-card" data-txt="广东粉丝：CORTIS一周年快乐！我哋永远撑你哋！">
+        广东
+        <div class="tooltip">广东粉丝：CORTIS一周年快乐！我哋永远撑你哋！</div>
+      </div>
+      <div class="prov-card" data-txt="广西粉丝：一周年快乐，未来继续发光发热！">
+        广西
+        <div class="tooltip">广西粉丝：一周年快乐，未来继续发光发热！</div>
+      </div>
+      <div class="prov-card" data-txt="海南粉丝：海风捎来祝福，CORTIS一周年快乐！">
+        海南
+        <div class="tooltip">海南粉丝：海风捎来祝福，CORTIS一周年快乐！</div>
+      </div>
+      <div class="prov-card" data-txt="重庆粉丝：CORTIS雄起！一周年快乐！">
+        重庆
+        <div class="tooltip">重庆粉丝：CORTIS雄起！一周年快乐！</div>
+      </div>
+      <div class="prov-card" data-txt="四川粉丝：CORTIS雄起！永远开心，永远自由！">
+        四川
+        <div class="tooltip">四川粉丝：CORTIS雄起！永远开心，永远自由！</div>
+      </div>
+      <div class="prov-card" data-txt="贵州粉丝：愿你们被世界温柔以待！">
+        贵州
+        <div class="tooltip">贵州粉丝：愿你们被世界温柔以待！</div>
+      </div>
+      <div class="prov-card" data-txt="云南粉丝：彩云之南为你们应援，一周年快乐！">
+        云南
+        <div class="tooltip">云南粉丝：彩云之南为你们应援，一周年快乐！</div>
+      </div>
+      <div class="prov-card" data-txt="西藏粉丝：纯净的祝福送给最棒的CORTIS！">
+        西藏
+        <div class="tooltip">西藏粉丝：纯净的祝福送给最棒的CORTIS！</div>
+      </div>
+      <div class="prov-card" data-txt="陕西粉丝：千年古都送来祝福，一周年快乐！">
+        陕西
+        <div class="tooltip">陕西粉丝：千年古都送来祝福，一周年快乐！</div>
+      </div>
+      <div class="prov-card" data-txt="甘肃粉丝：愿你们前路浩荡，未来可期！">
+        甘肃
+        <div class="tooltip">甘肃粉丝：愿你们前路浩荡，未来可期！</div>
+      </div>
+      <div class="prov-card" data-txt="青海粉丝：纯净的爱，送给最珍贵的你们！">
+        青海
+        <div class="tooltip">青海粉丝：纯净的爱，送给最珍贵的你们！</div>
+      </div>
+      <div class="prov-card" data-txt="宁夏粉丝：一周年快乐，我们永远支持！">
+        宁夏
+        <div class="tooltip">宁夏粉丝：一周年快乐，我们永远支持！</div>
+      </div>
+      <div class="prov-card" data-txt="新疆粉丝：来自边疆的祝福，CORTIS加油！">
+        新疆
+        <div class="tooltip">新疆粉丝：来自边疆的祝福，CORTIS加油！</div>
+      </div>
+      <div class="prov-card" data-txt="台湾粉丝：一周年快乐，期待相见，永远支持！">
+        台湾
+        <div class="tooltip">台湾粉丝：一周年快乐，期待相见，永远支持！</div>
+      </div>
+      <div class="prov-card" data-txt="香港粉丝：CORTIS一周年快樂！永遠支持你哋！">
+        香港
+        <div class="tooltip">香港粉丝：CORTIS一周年快樂！永遠支持你哋！</div>
+      </div>
+      <div class="prov-card" data-txt="澳门粉丝：一周年快乐，愿你们越来越好！">
+        澳门
+        <div class="tooltip">澳门粉丝：一周年快乐，愿你们越来越好！</div>
+      </div>
+    </div>
+  </section>
+  
+  <style>
+    .provinces-section {
+  max-width: 1200px;
+  margin: 60px auto;
+  padding: 0 20px;
+  text-align: center;
+}
+.province-grid {
+  display: grid;
+  /* 自动适配屏幕宽度，每列最小100px，最大平分宽度 */
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 16px;
+  margin-top: 30px;
+  padding: 0 10px;
+}
+.prov-card {
+  position: relative;
+  padding: 10px 16px;
+  background: rgba(54,78,134,0.1);
+  color: #364e86;
+  border-radius: 999px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+.prov-card:hover {
+  background: #364e86;
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.tooltip {
+  position: absolute;
+  bottom: 115%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #2a3d66;
+  color: #fff;
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.25s;
+  z-index: 99;
+}
+.prov-card:hover .tooltip {
+  opacity: 1;
+}
+  .tooltip {
+    position: absolute;
+    bottom: 115%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #2a3d66;
+    color: #fff;
+    font-size: 12px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.25s;
+    z-index: 99;
+  }
+  .prov-card:hover .tooltip {
+    opacity: 1;
+  }
+  
+  
+  </style>
+
+<!-- 全球粉丝祝福 -->
+<section id="fans" class="fans-section">
+    <h2 class="section-title">来自全球的祝福</h2>
+    <div class="fans-card-box">
+
+        <!-- 中国粉丝 -->
+        <div class="flip-card">
+            <div class="flip-inner">
+                <div class="flip-front">
+                    <h4>🇨🇳 中国粉丝</h4>
+                    <p>一周年快乐！感谢你们用音乐与舞台照亮我们，未来的路我们一直都在，永远陪伴CORTIS走花路！</p>
+                </div>
+                <div class="flip-back">
+                    <img src="photo\image.png" alt="中国粉丝应援">
+                </div>
+            </div>
+        </div>
+
+        <!-- 韩国粉丝 -->
+        <div class="flip-card">
+            <div class="flip-inner">
+                <div class="flip-front">
+                    <h4>🇰🇷 한국 팬</h4>
+                    <p>데뷔 1주년을 진심으로 축하드립니다! 앞으로의 모든 날들을 응원하며, CORTIS와 함께 하겠습니다.</p>
+                </div>
+                <div class="flip-back">
+                    <img src="photo\我说这个金主训真的别太萌了_1_Omii__来自小红书网页版.jpg" alt="韩国粉丝应援">
+                </div>
+            </div>
+        </div>
+
+        <!-- 日本粉丝 -->
+        <div class="flip-card">
+            <div class="flip-inner">
+                <div class="flip-front">
+                    <h4>🇯🇵 日本ファン</h4>
+                    <p>デビュー1周年おめでとう！これからもっと輝くCORTISを見守っていきます。ずっと応援しています！</p>
+                </div>
+                <div class="flip-back">
+                    <img src="photo\你永远可以相信中粉的“爱”_2_不见sin_来自小红书网页版.jpg" alt="日本粉丝应援">
+                </div>
+            </div>
+        </div>
+
+        <!-- 泰国粉丝 -->
+        <div class="flip-card">
+            <div class="flip-inner">
+                <div class="flip-front">
+                    <h4>🇹🇭 ไทยแฟน</h4>
+                    <p>สุขสันต์วันเดบิวต์ 1 ปี CORTIS! เราจะอยู่เคียงข้างคุณตลอดไป และชมคุณส่องแสงในทุกๆ วัน</p>
+                </div>
+                <div class="flip-back">
+                    <img src="photo\安安中国粉丝给足排面 在LA上空飞机应援_Aakani__来自小红书网页版.jpg" alt="泰国粉丝应援">
+                </div>
+            </div>
+        </div>
+
+        <!-- 欧美粉丝 -->
+        <div class="flip-card">
+            <div class="flip-inner">
+                <div class="flip-front">
+                    <h4>🇺🇸 Global Fans</h4>
+                    <p>Happy 1st Anniversary! We love you, support you, and are so proud of you. Shine bright, CORTIS!</p>
+                </div>
+                <div class="flip-back">
+                    <img src="photo\建筑双人应援卡车返图来啦❤️_1_momo_来自小红书网页版.jpg" alt="全球粉丝应援">
+                </div>
+            </div>
+        </div>
+
+        <!-- 全球粉丝 -->
+        <div class="flip-card">
+            <div class="flip-inner">
+                <div class="flip-front">
+                    <h4>🌍 全球粉丝</h4>
+                    <p>无论我们身在哪个国家，都会为你们呐喊。一周年快乐，愿CORTIS永远被光芒包围！</p>
+                </div>
+                <div class="flip-back">
+                    <img src="photo\啊啊hype大楼周边有主训贴纸装饰的回归车车_1_lily_来自小红书网页版.jpg" alt="全球粉丝">
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<style>
+/* 粉丝专区整体布局 */
+.fans-section {
+    padding: 60px 20px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+.fans-card-box {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-top: 24px;
+}
+
+/* 3D翻转容器 基础设置 */
+.flip-card {
+    background-color: transparent;
+    width: 100%;
+    height: 230px;
+    perspective: 1200px; /* 景深，数值越大3D效果越柔和 */
+}
+.flip-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.7s ease-in-out; /* 翻转速度：0.7s 快慢适中，流畅不卡顿 */
+    transform-style: preserve-3d;
+}
+/* 鼠标悬浮触发180°翻转 */
+.flip-card:hover .flip-inner {
+    transform: rotateY(180deg);
+}
+
+/* 卡片正面 - 文字区域 */
+.flip-front {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    background: rgba(255,255,255,0.92);
+    border: 1px solid rgba(54,78,134,0.25);
+    border-radius: 14px;
+    padding: 24px;
+    box-sizing: border-box;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+}
+.flip-front h4 {
+    color: #364e86;
+    margin: 0 0 12px 0;
+    font-size: 17px;
+}
+.flip-front p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #333;
+    margin: 0;
+}
+
+/* 卡片背面 - 图片区域 */
+.flip-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    transform: rotateY(180deg);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+}
+.flip-back img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 图片自适应不变形 */
+}
+</style>
+
+<footer class="footer">
+    <p>&copy; 2026 Cortis 一周年纪念站 | 出道一周年纪念</p>
+    <p>官方粉丝俱乐部：CORTIS ❤️</p>
+    <p>应援口号：以心为声，与你共鸣</p>
+    <p>官方社交账号：@Cortis</p>
+    <p>本站为粉丝自制纪念站点，非官方平台，用于纪念CORTIS出道一周年、展示作品与收集粉丝心意。</p>
+</footer>
+
+<script src="547.js"></script>
+
+<script>
+const allItems = document.querySelectorAll('.item');
+const dots = document.querySelectorAll('.dot-group span');
+const positions = ['left-2','left-1','active','right-1','right-2'];
+const arrowLeft = document.querySelector('.arrow-left');
+const arrowRight = document.querySelector('.arrow-right');
+let idx = 0;
+
+function move(){
+    allItems.forEach((el,i)=>{
+        el.className = 'item ' + positions[(i+idx)%5];
+    });
+    dots.forEach((d,i)=>d.classList.toggle('active',i===idx));
+}
+
+// 自动轮播
+setInterval(()=>{
+    idx = (idx + 1) % 5;
+    move();
+},3500);
+
+// 点击小圆点
+dots.forEach((d,i)=>{
+    d.onclick=()=>{
+        idx=i;
+        move();
+    }
+});
+
+// 点击左右箭头
+arrowLeft.onclick = () => {
+    idx = (idx - 1 + 5) % 5;
+    move();
+};
+arrowRight.onclick = () => {
+    idx = (idx + 1) % 5;
+    move();
+};
+
+move();
+</script>
+
+<!-- 回到顶部 -->
+<div id="goTop">↑</div>
+<script>
+    let topBtn = document.getElementById('goTop');
+    window.onscroll = () => {
+        if (window.scrollY > 300) {
+            topBtn.style.display = 'block';
+        } else {
+            topBtn.style.display = 'none';
+        }
+    };
+    topBtn.onclick = () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    };
+    //作品弹窗播放视频
+const workList = document.querySelectorAll('.work-item');
+const popBox = document.getElementById('videoPop');
+const videoPlay = document.getElementById('popVideo');
+const closeBtn = document.querySelector('.pop-close');
+
+//点击卡片打开视频
+workList.forEach(item=>{
+    item.onclick = function(){
+        let src = this.getAttribute('data-video');
+        videoPlay.src = src;
+        popBox.classList.add('show');
+        videoPlay.play();
+    }
+})
+//关闭弹窗
+function closePop(){
+    popBox.classList.remove('show');
+    videoPlay.pause();
+    videoPlay.src = '';
+}
+closeBtn.onclick = closePop;
+popBox.onclick = function(e){
+    if(e.target === popBox) closePop();
+}
+//ESC按键关闭
+document.onkeydown = e=>{
+    if(e.key==='Escape') closePop();
+}
+</script>
+
+</body>
+</html>
