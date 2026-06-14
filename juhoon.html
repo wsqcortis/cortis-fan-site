@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>金主训</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:微软雅黑}
+body{
+    background: url("photo/2.jpg") no-repeat center fixed;
+    background-size: cover;
+    padding:30px;
+}
+/*导航栏*/
+.nav{background:#364e86;color:white;padding:20px 30px;display:flex;justify-content:space-between;max-width:1100px;margin:0 auto 40px;border-radius:8px;}
+.nav a{color:white;text-decoration:none}
+.wrap{max-width:1100px;margin:0 auto;}
+/*上部About区域 左右布局*/
+.about-top{display:flex;gap:35px;margin-bottom:50px;align-items:flex-start;}
+.about-img{width:42%;}
+.about-img img{width:100%;border-radius:12px;box-shadow:0 4px 12px #e1e8f3;}
+.about-word{width:58%;}
+.title-en{font-size:32px;color:#222;margin-bottom:8px;position:relative;}
+.title-en::after{
+    content:"";width:100%;height:2px;background:#ee7777;position:absolute;left:0;bottom:-8px;
+}
+.sub-name{color:#dd5555;margin:15px 0;}
+.desc-p{line-height:1.7;font-size:15px;color:#333;margin:8px 0;}
+
+/*下部基础信息表格*/
+.info-title{font-size:26px;margin-bottom:12px;position:relative;}
+.info-title::after{
+    content:"";width:100%;height:2px;background:#ee7777;position:absolute;left:0;bottom:-8px;
+}
+.info-table{background:#fff;border-radius:10px;overflow:hidden;margin-top:25px;}
+.info-row{display:grid;grid-template-columns:180px 1fr;border-bottom:1px solid #eee;}
+.info-row>div:first-child{background:#f8f9fc;color:#dd5555;padding:13px 16px;font-weight:500;}
+.info-row>div:last-child{padding:13px 16px;}
+
+/*返回按钮*/
+.back{display:inline-block;margin-top:35px;padding:10px 25px;background:#364e86;color:white;border-radius:6px;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="nav">
+<div>CORTIS</div>
+<div><a href="index.html#members">金主训</a></div>
+</div>
+
+<div class="wrap">
+    <!--上半部分介绍-->
+    <div class="about-top">
+        <div class="about-img">
+            <img src="photo/cacb6bc54c6781c64e9461c3eb13b08a.jpg">
+        </div>
+        <div class="about-word">
+            <h2 class="title-en">About Me</h2>
+            <div class="sub-name">金主训 (Jin Zhuxun | 主舞·领唱)</div>
+            <p class="desc-p">Hello，舞台表现力拉满的全能舞担金主训，作为CORTIS队内主舞，凭借利落流畅的舞蹈线条、超强舞台爆发力成为团队编舞核心，舞台气场极具冲击力。从卡点细节到肢体控制，每一个走位、动作都经过反复打磨，不管是力量型炸场舞曲，还是柔和氛围感编舞，都能完美驾驭，凭借极强的镜头捕捉力牢牢抓住观众视线。</p>
+            <p class="desc-p">私下性格开朗热忱，擅长消化各类曲风编舞，兼顾领唱唱功，在唱跳双领域稳步精进，是舞台不可或缺的灵魂成员。空闲时常参与团体曲目编创工作，结合五位成员的身形与演唱特点调整动作设计，多次主导组合主打曲原版舞台编排，同时坚持声乐练习，拓宽音域，慢慢解锁高音、转音等演唱技巧。</p>
+            <p class="desc-p">日常认真打磨基本功，常年泡在练习室打磨体能与肢体功底，不断突破舞蹈风格边界，从国风、爵士到韩式流行舞持续拓展学习，舞台之外待人温柔细心，会主动安慰压力大的队友，用细腻的陪伴维系团队氛围，始终怀揣初心深耕舞台，用每一场高质量的现场回馈粉丝长久以来的偏爱与守候。</p>
+        </div>
+    </div>
+
+    <!--下半部分基础信息-->
+    <div class="info-box">
+        <h3 class="info-title">Basic Information</h3>
+        <div class="info-table">
+            <div class="info-row">
+                <div>Name</div>
+                <div>金主训</div>
+            </div>
+            <div class="info-row">
+                <div>Birth</div>
+                <div>2008.01.03</div>
+            </div>
+            <div class="info-row">
+                <div>Position</div>
+                <div>CORTIS 主舞、领唱</div>
+            </div>
+            <div class="info-row">
+                <div>Represent Works</div>
+                <div>《Red Red》《Hom3》舞台编舞、团体全专辑演唱</div>
+            </div>
+            <div class="info-row">
+                <div>Skill</div>
+                <div>现代舞、K-Pop编舞、高音演唱、舞台表现力</div>
+            </div>
+            <div class="info-row">
+                <div>Personality</div>
+                <div>阳光外向、细心靠谱、舞台严谨、私下随和暖心</div>
+            </div>
+        </div>
+    </div>
+    <a href="/547.html#members" class="back">返回成员列表</a>
+</div>
+</body>
+</html>
